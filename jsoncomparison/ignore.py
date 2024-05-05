@@ -6,6 +6,9 @@ class Ignore(ABC):
 
     @classmethod
     def transform(cls, obj, rules):
+        if obj is None:
+            return None
+
         t = type(rules)
         if t is dict:
             return cls._apply_dictable_rule(obj, rules)
