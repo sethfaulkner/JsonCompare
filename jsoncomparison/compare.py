@@ -1,5 +1,6 @@
 import copy
 import json
+import math
 from typing import Optional
 
 from .config import Config
@@ -101,6 +102,12 @@ class Compare:
     def _float_diff(self, e, a):
         if a == e:
             return NO_DIFF
+
+        if self._can_percent_diff():
+            p = self._float_percent_diff()
+            if math.isclose(a, e, rel_tol=p):
+                return NO_DIFF
+
         if self._can_rounded_float():
             p = self._float_precision()
             e, a = round(e, p), round(a, p)
@@ -112,8 +119,16 @@ class Compare:
         p = self._float_precision()
         return type(p) is int
 
+    def _can_percent_diff(self):
+        p = self._float_percent_diff()
+        return type(p) is float
+
     def _float_precision(self):
         path = 'types.float.allow_round'
+        return self._config.get(path)
+
+    def _float_percent_diff(self):
+        path = 'types.float.allow_percent_diff'
         return self._config.get(path)
 
     def _dict_diff(self, e, a):
@@ -149,7 +164,9 @@ class Compare:
             if v in a:
                 continue
             t = type(v)
-            if t in (int, str, bool, float):
+            if t is float:
+                d[i] = self._min_diff(v, a, self._float_diff)
+            if t in (int, str, bool):
                 d[i] = ValueNotFound(v, None).explain()
             elif t is dict:
                 d[i] = self._min_diff(v, a, self._dict_diff)
@@ -177,7 +194,6 @@ class Compare:
                 dd = method(e, v)
                 if len(dd) <= len(d):
                     d = dd
-                    break
         return d
 
     @classmethod

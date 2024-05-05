@@ -1,7 +1,8 @@
 {
     "types": {
         "float": {
-            "allow_round": 2
+            "allow_round": 2,
+            "allow_percent_diff": 0.05
         },
         "list": {
             "check_length": true

@@ -41,6 +41,9 @@ class CompareTestCase(unittest.TestCase):
         diff = self.compare.check(1.23456, 1.23)
         self.assertEqual(diff, NO_DIFF)
 
+        diff = self.compare.check(100.0, 105.0)
+        self.assertEqual(diff, NO_DIFF)
+
         diff = self.compare.check(1.2, 1.3)
         self.assertEqual(diff, ValuesNotEqual(1.2, 1.3).explain())
 
@@ -126,7 +129,7 @@ class CompareTestCase(unittest.TestCase):
         self.assertEqual(
             diff, {
                 '_content': {
-                    0: {'a': ValuesNotEqual('xxx', 'zzz').explain()},
+                    0: {'a': ValuesNotEqual('xxx', 'yyy').explain()},
                 },
             },
         )
@@ -152,8 +155,8 @@ class CompareTestCase(unittest.TestCase):
         self.assertEqual(
             diff, {
                 '_content': {
-                    1: {'a': ValuesNotEqual('iii', 'zzz').explain()},
-                    3: {'a': ValuesNotEqual('jjj', 'zzz').explain()},
+                    1: {'a': ValuesNotEqual('iii', 'eee').explain()},
+                    3: {'a': ValuesNotEqual('jjj', 'eee').explain()},
                 },
             },
         )
@@ -175,7 +178,7 @@ class CompareTestCase(unittest.TestCase):
         self.assertEqual(
             diff, {
                 '_content': {
-                    3: {'a': ValuesNotEqual('jjj', 'zzz').explain()},
+                    3: {'a': ValuesNotEqual('jjj', 'iii').explain()},
                 },
             },
         )
